@@ -1,0 +1,180 @@
+<html>
+<head>
+    <title>NameBerry</title>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom CSS -->
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        background-color: #ffe6f0;
+        }
+        h1 {
+            font-size: 36px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        p {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ff99cc;
+            background-image: linear-gradient(to right, #ff99cc, #ff66b3);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            margin-bottom: 10px;
+        }
+        button {
+            font-size: 20px;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+        }
+        #result {
+            display: none;
+            text-align: center;
+        }
+
+    </style>
+    <!-- Custom JS -->
+    <script>
+        $(document).ready(function() {
+            // Validate the user input
+            function validateInput() {
+                var nameLength = $("#nameLength").val();
+                var firstLetter = $("#firstLetter").val();
+                if (nameLength < 1 || nameLength > 20) {
+                    alert("Name length must be between 1 and 20");
+                    return false;
+                }
+                if (firstLetter.length > 1) {
+                    alert("First letter must be one character or empty");
+                    return false;
+                }
+                return true;
+            }
+            
+            
+            //submit the form
+
+            console.log("JavaScript code loaded");
+            $("#form").submit(function(event) {
+                event.preventDefault();
+                if (validateInput()) {
+                    showLoading();
+                    $.ajax({
+                        url: "/",
+                        method: "POST",
+                        data: $(this).serialize(),
+                        dataType: "json",
+                        success: function(data) {
+                            let name = data.name;
+                            console.log(name)
+                            showResult(name)
+                        },
+                        error: function() {
+                            alert("An error occurred");
+                        }
+                    });
+                }
+            });
+
+            // Show a loading animation while the name suggestion is being generated
+            function showLoading() {
+                $("#form").hide();
+                $("#loading").show();
+            }
+
+            // Show the name suggestion and some information about it
+            function showResult(name) {
+                $("#loading").hide();
+                $("#result").show();
+                $("#name").text(name);
+            }
+
+            
+
+        });
+        function goBack() {
+                console.log("Hi")
+                $("#result").hide()
+                $("#form").show()
+            }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>NameBerry</h1>
+        <p>Find the perfect name for your new born baby based on your preferences.</p>
+        <form id="form" method="post" action="/">
+            <div class="form-group">
+                <label for="gender"> What is the Gender of your baby?</label>
+                <select id="gender" name="gender" class="form-control">
+                    <option value="boy">Boy</option>
+                    <option value="girl">Girl</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="trending">Do you want a trending name for your baby?</label>
+                <select id="trending" name="trending" class="form-control">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="nameLength">How many letters should be there in the name?</label>
+                <input type="number" id="nameLength" name="nameLength" class="form-control" min="1" max="20" value="6">
+            </div>
+            <div class="form-group">
+                <label for="firstLetter">What should be the first letter in the name?</label>
+                <input type="text" id="firstLetter" name="firstLetter" class="form-control" maxlength="1"  style="text-transform: uppercase" value="A">
+            </div>
+            <div class="form-group">
+                <label for="genderNeutral">Do you want a gender neutral name</label>
+                <select id="genderNeutral" name="genderNeutral" class="form-control">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="popularity">What should be the popularity of the name?</label>
+                <select id="popularity" name="popularity" class="form-control">
+                    <option value="very high"> Very High</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                    <option value="very low">Very Low</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="background-color: #000099; border-color: #000000;">Suggest Name</button>
+        
+        </form>
+        <div id="loading">
+            <img src="loading.gif" alt="Loading...">
+        </div>
+        <div id="result">
+            <h3>Your baby name Suggestion is</h3>
+            <h1 id="name"></h1>
+            <button id="goback" onclick="goBack()" class="btn btn-primary btn-block" style="background-color: #000099; border-color: #000000;">Go back</button>
+        
+        </div>
+    </div>
+</body>
+</html>
+
